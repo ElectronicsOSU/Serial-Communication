@@ -8,7 +8,6 @@
 #define LED 2
 volatile int flag = HIGH;
 int thermo_address = 72; //I2C Address of the device
-int slave = 2;
 byte read_temp_command = 0x00; //Command to be sent to the thermometer
 void setup() {
   // put your setup code here, to run once:
@@ -18,8 +17,6 @@ void setup() {
   Serial.println("Wire Started");
   pinMode(LED,OUTPUT);
   digitalWrite(LED,LOW);
-  attachInterrupt(button,buttonpress,FALLING);
-  flag = LOW;
 }
 
 void loop() {
@@ -45,19 +42,7 @@ void loop() {
   Serial.print("\n");
   
   //Delay between readings
-  delay(500);
-  if(flag==HIGH)
-  {
-    Wire.beginTransmission(slave);
-    Wire.write(2);
-    Wire.endTransmission();
-    digitalWrite(LED,LOW);
-    flag = LOW;
-  }
-}
-void buttonpress()
-{
-  digitalWrite(LED,HIGH);
-  flag = HIGH;
+  delay(250);
+
 }
 
