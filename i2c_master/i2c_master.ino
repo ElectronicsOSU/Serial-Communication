@@ -10,8 +10,7 @@ volatile int flag = HIGH;
 int thermo_address = 72; //I2C Address of the device
 byte read_temp_command = 0x00; //Command to be sent to the thermometer
 void setup() {
-  // put your setup code here, to run once:
-  Serial.begin(38400); //Start Serial and output the news
+  Serial.begin(9600); 
   Serial.println("Serial Started");
   Wire.begin(); //Start wire library
   Serial.println("Wire Started");

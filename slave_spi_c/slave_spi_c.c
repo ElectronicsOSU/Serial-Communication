@@ -48,13 +48,17 @@ int main(void)
   UCA0CTL0 |= UCMSB + UCSYNC;   
   /**Initialize USCI state machine**/            
   UCA0CTL1 &= ~UCSWRST;                     
-  IE2 |= UCA0RXIE;                          // Enable USCI0 RX interrupt
+  /**Enable Interrupts**/
+  IE2 |= UCA0RXIE; 
+  /**General Enable Interrupts**/
+  __bis_SR_register(GIE);
   while(1)
   {
     if(flag == 1)
     {
       while(received_int>0)
       {
+        /**Blink for the number of the value sent to the slave**/
         received_int--;
         P1OUT |= BIT0;
         nop_delay(0x4fff);
@@ -64,39 +68,11 @@ int main(void)
       }
     }
   }
- // __bis_SR_register(LPM4_bits + GIE);       // Enter LPM4, enable interrupts
 }
 
 __attribute__((interrupt(USCIAB0RX_VECTOR))) void USCI0RX_ISR (void)
 {
-  
-  while (!(IFG2 & UCA0TXIFG ));
-  if(!(P1IN & BIT5))
-  {
-  P1OUT |= BIT6;
-  P1OUT |= BIT0;
-  received_int = UCA0RXBUF;
-  flag = 1;
-  /*while( i<value) {
-    P1OUT |= BIT6;
-    nop_delay(0x4fff);
-    P1OUT &=~BIT6;
-    nop_delay(0x4fff);
-    i++;
-  }
-  P1OUT &= ~BIT0;
-  P1OUT &=~BIT6;
-  nop_delay(0x4fff);
-  nop_delay(0x4fff);
-  nop_delay(0x4fff);
-  
-  UCA0TXBUF = value;  
-  }
-  else{}
-    /*
-  if (UCA0STAT & UCOE) {
     P1OUT |= BIT0;
-  }
-  */
-  
+    received_int = UCA0RXBUF;
+    flag = 1;  
 }
