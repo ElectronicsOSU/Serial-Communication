@@ -1,50 +1,46 @@
-//Pins used 2.1 -- SCL
-//          2.2 -- SDL
-//          GND -- GND
-//          VCC -- VCC
-
+/*
+ * Simple demonstration of I2C
+ * Connects to a temperature sensor (TC74A0)
+ * Prints the readings to serial in Celsius and Farenheit
+ * Datasheet for sensor: https://my.mouser.com/datasheet/2/268/21462c-73653.pdf
+ */
 #include <Wire.h>
-#define button 5
-#define LED 2
-volatile int flag = HIGH;
-int thermo_address = 72; //I2C Address of the device
-byte read_temp_command = 0x00; //Command to be sent to the thermometer
+#define THERMO_ADDRESS 72 //I2C Address of the device
+
+#define READ_TEMP_COMMAND 0x00 //Command to be sent to the thermometer
 void setup() {
-  Serial.begin(9600); 
+  Serial.begin(115200);
   Serial.println("Serial Started");
   Wire.begin(); //Start wire library
   Serial.println("Wire Started");
-  pinMode(LED,OUTPUT);
-  digitalWrite(LED,LOW);
 }
 
 void loop() {
   //Start Transmission
-  Wire.beginTransmission(thermo_address);
+  Wire.beginTransmission(THERMO_ADDRESS);
   //Write the command to the thermometer
-  Wire.write(read_temp_command);
+  Wire.write(READ_TEMP_COMMAND);
   //End the transmission
   Wire.endTransmission();
 
   //Request 1 byte from the thermo_address
-  Wire.requestFrom(thermo_address, 1);
+  Wire.requestFrom(THERMO_ADDRESS, 1);
 
   //While there is no info available
   while (Wire.available() == 0);
 
   //Temperature that is read in celsius
-  int c = Wire.read(); 
+  int c = Wire.read();
 
   //Print info to the user
   Serial.print("Temperature(C): ");
   Serial.print(c);
   Serial.print("\n");
   Serial.print("Temperature(F): ");
-  Serial.print((c*9/5)+32);
+  Serial.print((c * 9 / 5) + 32);
   Serial.print("\n");
-  
+
   //Delay between readings
   delay(500);
 
 }
-
